@@ -60,7 +60,7 @@ object Lox {
 
   private def run(source: String): Unit = {
     var scanner: java.util.Scanner = new Scanner(source)
-    var tokens: List[String] = scanner.scanTokens()
+    var tokens: List[Token] = scanner.scanTokens()
     tokens.forEach(println)
   }
 
