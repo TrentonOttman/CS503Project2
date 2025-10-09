@@ -56,8 +56,51 @@ class Scanner(val source: String) {
                         } else {
                             addToken(GREATER)
                         }
-            case _ => Lox.error(line, "Unexpected character.")
+            case '/' => if (matchChar('/')) {
+                            while (peek() != '\n' && !isAtEnd()) advance()
+                        } else {
+                            addToken(SLASH)
+                        }
+            case ' ' =>
+            case '\r' =>
+            case '\t' =>
+            case '\n' => line += 1
+            case '"' => string()
+            case _ => if (isDigit(c)) {
+                        number()
+                    } else {
+                        Lox.error(line, "Unexpected character.")
+                    }
         }
+    }
+
+    private def number(): Unit = {
+        while (isDigit(peek())) advance()
+
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance()
+
+            while (isDigit(peek())) advance()
+        }
+
+        addToken(NUMBER, source.substring(start, current).toDouble)
+    }
+
+    private def string(): Unit = {
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\n') line += 1
+            advance()
+        }
+
+        if (isAtEnd()) {
+            Lox.error(line, "Undetermined string.")
+            return
+        }
+
+        advance()
+
+        var value: String = source.substring(start+1, current-1)
+        addToken(STRING, value)
     }
 
     private def matchChar(expected: Character): Boolean = {
@@ -68,12 +111,26 @@ class Scanner(val source: String) {
         true
     }
 
+    private def peek(): Character = {
+        if (isAtEnd()) return '\u0000'
+        source.charAt(current)
+    }
+
+    private def peekNext(): Character = {
+        if (current+1 >= source.length()) return '\u0000'
+        return source.charAt(current+1)
+    }
+
+    private def isDigit(c: Character): Boolean = {
+        c >= '0' && c <= '9'
+    }
+
     private def isAtEnd(): Boolean = {
         current >= source.length()
     }
 
     private def advance(): Character = {
-        var char = source.charAt(current)
+        var char: Character = source.charAt(current)
         current += 1
         char
     }
