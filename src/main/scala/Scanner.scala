@@ -11,7 +11,7 @@ class Scanner(val source: String) {
     private val tokens: List[Token] = new ArrayList[Token]()
     private var start: Int = 0
     private var current: Int = 0
-    private var line: Int = 0
+    private var line: Int = 1
 
     def scanTokens(): List[Token] = {
         while (!isAtEnd()) {
@@ -24,7 +24,7 @@ class Scanner(val source: String) {
     }
 
     private def scanToken(): Unit = {
-        var c: Character = advance()
+        var c: Char = advance()
         c match {
             case '(' => addToken(LEFT_PAREN)
             case ')' => addToken(RIGHT_PAREN)
@@ -68,10 +68,21 @@ class Scanner(val source: String) {
             case '"' => string()
             case _ => if (isDigit(c)) {
                         number()
+                    } else if (isAlpha(c)) {
+                        identifier()
                     } else {
                         Lox.error(line, "Unexpected character.")
                     }
         }
+    }
+
+    private def identifier(): Unit = {
+        while (isAlphaNumeric(peek())) advance()
+
+        var text: String = source.substring(start, current)
+        var tokenType: TokenType = Scanner.keywords.get(text)
+        if (tokenType == null) tokenType = IDENTIFIER
+        addToken(tokenType)
     }
 
     private def number(): Unit = {
@@ -93,7 +104,7 @@ class Scanner(val source: String) {
         }
 
         if (isAtEnd()) {
-            Lox.error(line, "Undetermined string.")
+            Lox.error(line, "Unterminated string.")
             return
         }
 
@@ -103,7 +114,7 @@ class Scanner(val source: String) {
         addToken(STRING, value)
     }
 
-    private def matchChar(expected: Character): Boolean = {
+    private def matchChar(expected: Char): Boolean = {
         if (isAtEnd()) return false
         if (source.charAt(current) != expected) return false
 
@@ -111,17 +122,25 @@ class Scanner(val source: String) {
         true
     }
 
-    private def peek(): Character = {
+    private def peek(): Char = {
         if (isAtEnd()) return '\u0000'
         source.charAt(current)
     }
 
-    private def peekNext(): Character = {
+    private def peekNext(): Char = {
         if (current+1 >= source.length()) return '\u0000'
         return source.charAt(current+1)
     }
 
-    private def isDigit(c: Character): Boolean = {
+    private def isAlpha(c: Char): Boolean = {
+        (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
+    }
+
+    private def isAlphaNumeric(c: Char): Boolean = {
+        isAlpha(c) || isDigit(c)
+    }
+
+    private def isDigit(c: Char): Boolean = {
         c >= '0' && c <= '9'
     }
 
@@ -129,8 +148,8 @@ class Scanner(val source: String) {
         current >= source.length()
     }
 
-    private def advance(): Character = {
-        var char: Character = source.charAt(current)
+    private def advance(): Char = {
+        var char: Char = source.charAt(current)
         current += 1
         char
     }
@@ -143,4 +162,24 @@ class Scanner(val source: String) {
         var text: String = source.substring(start, current)
         tokens.add(new Token(tokenType, text, literal, line))
     }
+}
+
+object Scanner {
+    private val keywords: Map[String, TokenType] = new HashMap[String, TokenType]()
+    keywords.put("and", AND)
+    keywords.put("class",  CLASS)
+    keywords.put("else",   ELSE)
+    keywords.put("false",  FALSE)
+    keywords.put("for",    FOR)
+    keywords.put("fun",    FUN)
+    keywords.put("if",     IF)
+    keywords.put("nil",    NIL)
+    keywords.put("or",     OR)
+    keywords.put("print",  PRINT)
+    keywords.put("return", RETURN)
+    keywords.put("super",  SUPER)
+    keywords.put("this",   THIS)
+    keywords.put("true",   TRUE)
+    keywords.put("var",    VAR)
+    keywords.put("while",  WHILE)
 }

@@ -9,8 +9,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.List
 import scala.util.control.Breaks._
-import java.util.Scanner
+import java.util.{Scanner => JavaScanner}
 import scala.compiletime.ops.boolean._
+import com.craftinginterpreters.lox.Scanner
 
 object Lox {
   var hadError: Boolean = false;
@@ -59,7 +60,7 @@ object Lox {
   }
 
   private def run(source: String): Unit = {
-    var scanner: java.util.Scanner = new Scanner(source)
+    var scanner: Scanner = new Scanner(source)
     var tokens: List[Token] = scanner.scanTokens()
     tokens.forEach(println)
   }
