@@ -14,7 +14,9 @@ import scala.compiletime.ops.boolean._
 import com.craftinginterpreters.lox.Scanner
 
 object Lox {
-  var hadError: Boolean = false;
+  private val interpreter = new Interpreter()
+  var hadError: Boolean = false
+  var hadRuntimeError: Boolean = false
   def main(args: Array[String]): Unit = {
     try {
       if (args.length > 1) {
@@ -60,10 +62,14 @@ object Lox {
   }
 
   private def run(source: String): Unit = { //updated in chapter 6.4
+    val scanner = new Scanner(source)
+    val tokens = scanner.scanTokens()
     val parser = new Parser(tokens)
     val expression = parser.parse()
     if (Lox.hadError) return
+    if (hadRuntimeError) System.exit(70)
     println(new AstPrinter().print(expression))
+    interpreter.interpret(expression)
   }
 
   def error(line: Int, message: String): Unit = {
@@ -80,5 +86,10 @@ object Lox {
       report(token.line, " at end", message)
     else
       report(token.line, s" at '${token.lexeme}'", message)
+  }
+
+  def runtimeError(error: RuntimeError): Unit = {
+    System.err.println(s"${error.getMessage}\n[line ${error.token.line}]")
+    hadRuntimeError = true
   }
 }
