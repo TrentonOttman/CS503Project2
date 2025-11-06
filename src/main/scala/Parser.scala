@@ -1,14 +1,14 @@
-//Part of chapter 6
-package com.craftinginterpreters.lox
+// //Part of chapter 6
+// package com.craftinginterpreters.lox
 
 
-class Parser(tokens: List[Token]):
-    var current = 0
+// class Parser(tokens: List[Token]):
+//     var current = 0
 
-    def parse(): Expr = expression()
+//     def parse(): Expr = expression()
 
-    def expression(): Expr = equality()
+//     def expression(): Expr = equality()
 
-    def equality(): Expr = 
-        var expr = comparison()
-        while 
+//     def equality(): Expr = 
+//         var expr = comparison()
+//         while 
