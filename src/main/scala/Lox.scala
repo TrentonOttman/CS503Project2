@@ -59,10 +59,11 @@ object Lox {
     }
   }
 
-  private def run(source: String): Unit = {
-    var scanner: Scanner = new Scanner(source)
-    var tokens: List[Token] = scanner.scanTokens()
-    tokens.forEach(println)
+  private def run(source: String): Unit = { //updated in chapter 6.4
+    val parser = new Parser(tokens)
+    val expression = parser.parse()
+    if (Lox.hadError) return
+    println(new AstPrinter().print(expression))
   }
 
   def error(line: Int, message: String): Unit = {
@@ -72,5 +73,12 @@ object Lox {
   private def report(line: Int, where: String, message: String): Unit = {
     println("[line " + line + "] Error" + where + ": " + message)
     hadError = true
+  }
+
+  def error(token: Token, message: String): Unit = {
+    if (token.tokenType == TokenType.EOF)
+      report(token.line, " at end", message)
+    else
+      report(token.line, s" at '${token.lexeme}'", message)
   }
 }

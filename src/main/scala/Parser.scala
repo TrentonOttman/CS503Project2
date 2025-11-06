@@ -5,9 +5,19 @@ package com.craftinginterpreters.lox
 import java.util.List
 import static com.craftinginterpreters.lox.TokenType.*
 
-
 class Parser (private val tokens: List[Tokens]) {
     private var current: Int = 0
+    
+    private class ParseError extends RuntimeException //this part might be wrong im not sure by where it wants it nested inside
+}
+
+
+def parse(): Expr = {
+    try {
+        expression()
+    } catch {
+        case _: ParseError => null
+    }
 }
 
 
@@ -93,6 +103,12 @@ private def matchTypes(types: TokenType*): Boolean = {
 }
 
 
+private def consume(tpe: TokenType, message: String): Token = {
+    if (check(tpe)) return advance()
+    throw error(peek(), message)
+}
+
+
 private def advance(): Token = {
     if(!isAtEnd()) current += 1
     previous()
@@ -115,3 +131,28 @@ private def previous(): Token = {
 }
 
 
+private def error(token: Token, message: String): ParseError = {
+    Lox.error(token, message)
+    new ParseError
+}
+
+
+private def synchronize(): Unit = {
+    advance()
+    while (!isAtEnd) {
+        if (previous().tokenType == TokenType.SEMICOLON) return
+        peek().tokenType match {
+        case TokenType.CLASS |
+            TokenType.FUN |
+            TokenType.VAR |
+            TokenType.FOR |
+            TokenType.IF |
+            TokenType.WHILE |
+            TokenType.PRINT |
+            TokenType.RETURN =>
+            return
+        case _ =>
+        }
+        advance()
+    }
+}
