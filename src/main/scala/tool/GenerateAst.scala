@@ -18,12 +18,17 @@ object GenerateAst {
                 "Binary   : Expr left, Token operator, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : Any value",
+                "Logical  : Expr left, Token operator, Expr right",
                 "Unary    : Token operator, Expr right"
             ))
             defineAst(outputDir, "Stmt", List( //added in from chapter 8.1.1
-                "Block      : List<Stmt> statements"
+                "Block      : List<Stmt> statements",
                 "Expression : Expr expression",
-                "Print      : Expr expression"
+                "If         : Expr condition, Stmt thenBranch," +
+                            " Stmt elseBranch",
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer",
+                "While      : Expr condition, Stmt body"
             ))
         } catch {
             case e: IOException => println("IOException occurred.")

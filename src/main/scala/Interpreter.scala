@@ -4,7 +4,7 @@ import java.util.List
 
 class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
 
-    private val environment = new Environment()
+    private var environment = new Environment()
 
     def interpret(statements: List[Stmt]): Unit = {
         try {
@@ -19,6 +19,19 @@ class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
 
     override def visitLiteralExpr(expr: Expr.Literal): Any = {
         expr.value
+    }
+
+    override def visitLogicalExpr(expr: Expr.Logical): Any = {
+        val left = evaluate(expr.left)
+
+        if (expr.operator.tokenType == TokenType.OR) {
+            if (isTruthy(left)) return left
+        } 
+        else {
+            if (!isTruthy(left)) return left
+        }
+
+        evaluate(expr.right)
     }
 
     override def visitUnaryExpr(expr: Expr.Unary): Any = {
@@ -84,7 +97,6 @@ class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
         }
     }
 
-
     override def visitBlockStmt(stmt: Stmt.Block): Unit = {
         executeBlock(stmt.statements, new Environment(environment))
     }
@@ -92,6 +104,15 @@ class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
     override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {
         evaluate(stmt.expression)
         ()
+    }
+
+    override def visitIfStmt(stmt: Stmt.If): Unit = {
+        if (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.thenBranch)
+        }
+        else {
+            stmt.elseBranch.foreach(execute)
+        }
     }
 
     override def visitPrintStmt(stmt: Stmt.Print): Unit = {
@@ -106,6 +127,12 @@ class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
             value = evaluate(stmt.initializer)
         }
         environment.define(stmt.name.lexeme, value)
+    }
+
+    override def visitWhileStmt(stmt: Stmt.While): Unit = {
+        while (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.body)
+        }
     }
 
     override def visitAssignExpr(expr: Expr.Assign): Any = {

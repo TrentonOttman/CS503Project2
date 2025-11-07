@@ -2,6 +2,7 @@ package com.craftinginterpreters.lox
 
 import java.util.HashMap
 import java.util.Map
+import scala.collection.mutable
 
 class Environment(val enclosing: Environment = null) {
 
