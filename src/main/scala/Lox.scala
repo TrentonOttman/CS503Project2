@@ -65,11 +65,11 @@ object Lox {
     val scanner = new Scanner(source)
     val tokens = scanner.scanTokens()
     val parser = new Parser(tokens)
-    val expression = parser.parse()
+    val statements = parser.parse()
     if (Lox.hadError) return
     if (hadRuntimeError) System.exit(70)
     println(new AstPrinter().print(expression))
-    interpreter.interpret(expression)
+    interpreter.interpret(statements)
   }
 
   def error(line: Int, message: String): Unit = {

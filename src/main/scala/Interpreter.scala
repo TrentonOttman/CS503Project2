@@ -1,12 +1,16 @@
 package com.craftinginterpreters.lox
 
+import java.util.List
 
-class Interpreter extends Expr.Visitor[Any] {
+class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
 
-    def interpret(expression: Expr): Unit = {
+    private val environment = new Environment()
+
+    def interpret(statements: List[Stmt]): Unit = {
         try {
-            val value = evaluate(expression)
-            println(stringify(value))
+            for (statement <- statements) {
+            execute(statement)
+            }
         } catch {
             case error: RuntimeError =>
             Lox.runtimeError(error)
@@ -24,6 +28,10 @@ class Interpreter extends Expr.Visitor[Any] {
             case TokenType.BANG => !isTruthy(right)
             case _ => null
         }
+    }
+
+    override def visitVariableExpr(expr: Expr.Variable): Any = {
+        environment.get(expr.name)
     }
 
     private def isTruthy(value: Any): Boolean = {
@@ -58,6 +66,52 @@ class Interpreter extends Expr.Visitor[Any] {
 
     private def evaluate(expr: Expr): Any = {
         expr.accept(this)
+    }
+
+    private def execute(stmt: Stmt): Unit = {
+        stmt.accept(this)
+    }
+
+    def executeBlock(statements: List[Stmt], environment: Environment): Unit = {
+        val previous = this.environment
+        try {
+            this.environment = environment
+            for (statement <- statements) {
+            execute(statement)
+            }
+        } finally {
+            this.environment = previous
+        }
+    }
+
+
+    override def visitBlockStmt(stmt: Stmt.Block): Unit = {
+        executeBlock(stmt.statements, new Environment(environment))
+    }
+
+    override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {
+        evaluate(stmt.expression)
+        ()
+    }
+
+    override def visitPrintStmt(stmt: Stmt.Print): Unit = {
+        val value = evaluate(stmt.expression)
+        println(stringify(value))
+        ()
+    }
+
+    override def visitVarStmt(stmt: Stmt.Var): Unit = {
+        var value: Any = null
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer)
+        }
+        environment.define(stmt.name.lexeme, value)
+    }
+
+    override def visitAssignExpr(expr: Expr.Assign): Any = {
+        val value = evaluate(expr.value)
+        environment.assign(expr.name, value)
+        value
     }
 
     override def visitBinaryExpr(expr: Expr.Binary): Any = {

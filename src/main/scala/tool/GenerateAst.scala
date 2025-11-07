@@ -14,10 +14,16 @@ object GenerateAst {
             }
             val outputDir = args(0)
             defineAst(outputDir, "Expr", List(
+                "Assign   : Token name, Expr value",
                 "Binary   : Expr left, Token operator, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : Any value",
                 "Unary    : Token operator, Expr right"
+            ))
+            defineAst(outputDir, "Stmt", List( //added in from chapter 8.1.1
+                "Block      : List<Stmt> statements"
+                "Expression : Expr expression",
+                "Print      : Expr expression"
             ))
         } catch {
             case e: IOException => println("IOException occurred.")

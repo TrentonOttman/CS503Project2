@@ -1,22 +1,87 @@
-//parser completed up to chapter 6.3 rn
-
 package com.craftinginterpreters.lox
 
 import java.util.List
+import java.util.ArrayList
 import com.craftinginterpreters.lox.TokenType._
 
 class Parser (private val tokens: List[Token]) {
     private var current: Int = 0
         
-    def parse(): Expr = {
+    def parse(): List[Stmt] = {
+        var statements = List.empty[Stmt]
+        while (!isAtEnd()) {
+            statements = statements :+ declaration()
+        }
+        statements
+    }
+
+    private def expression(): Expr = assignment()
+
+    private def declaration(): Stmt = {
         try {
-            expression()
+            if (matchTypes(TokenType.VAR)) return varDeclaration()
+            statement()
         } catch {
-            case _: ParseError => null
+            case _: ParseError =>
+            synchronize()
+            null
         }
     }
 
-    private def expression(): Expr = equality()
+    private def statement(): Stmt = {
+        if (matchTypes(TokenType.PRINT)) return printStatement()
+        if (matchTypes(TokenType.LEFT_BRACE)) return Stmt.Block(block())
+        expressionStatement()
+    }
+
+    private def printStatement(): Stmt = {
+        val value = expression()
+        consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        Stmt.Print(value)
+    }
+
+    private def varDeclaration(): Stmt = {
+        val name = consume(TokenType.IDENTIFIER, "Expect variable name.")
+        var initializer: Expr = null
+        if (matchTypes(TokenType.EQUAL)) {
+            initializer = expression()
+        }
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        Stmt.Var(name, initializer)
+    }
+
+    private def expressionStatement(): Stmt = {
+        val expr = expression()
+        consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        Stmt.Expression(expr)
+    }
+
+    private def block(): List[Stmt] = {
+        var statements = List.empty[Stmt]
+
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            statements = statements :+ declaration()
+        }
+
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
+        statements
+    }
+
+    private def assignment(): Expr = {
+        var expr = equality()
+
+        if (matchTypes(TokenType.EQUAL)) {
+            val equals = previous()
+            val value = assignment()
+            expr match {
+            case variable: Expr.Variable =>
+                val name = variable.name
+                return Expr.Assign(name, value)
+            case _ => error(equals, "Invalid assignment target.")
+            }
+        }
+        expr
+    }
 
     private def equality(): Expr = {
         var expr = comparison()
@@ -72,6 +137,9 @@ class Parser (private val tokens: List[Token]) {
         if (matchTypes(TokenType.TRUE))  return Expr.Literal(true)
         if (matchTypes(TokenType.NIL))   return Expr.Literal(null)
         if (matchTypes(TokenType.NUMBER, TokenType.STRING)) return Expr.Literal(previous().literal)
+        if (matchTypes(TokenType.IDENTIFIER)) {
+            return Expr.Variable(previous())
+        }
         if (matchTypes(TokenType.LEFT_PAREN)) {
             val expr = expression()
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
@@ -141,5 +209,5 @@ class Parser (private val tokens: List[Token]) {
         }
     }
 
-    private class ParseError extends RuntimeException //this part might be wrong im not sure by where it wants it nested inside
+    private class ParseError extends RuntimeException
 }
