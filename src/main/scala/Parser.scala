@@ -1,17 +1,19 @@
 package com.craftinginterpreters.lox
 
-import java.util.Arrays
 import java.util.List
-import java.util.ArrayList
 import com.craftinginterpreters.lox.TokenType._
+import scala.util.boundary, boundary.break
+import java.util.ArrayList
+import scala.jdk.CollectionConverters._
+import java.util.Arrays
 
 class Parser (private val tokens: List[Token]) {
     private var current: Int = 0
         
     def parse(): List[Stmt] = {
-        var statements = List.empty[Stmt]
+        var statements: List[Stmt] = new ArrayList
         while (!isAtEnd()) {
-            statements = statements :+ declaration()
+            statements.add(declaration())
         }
         statements
     }
@@ -32,13 +34,12 @@ class Parser (private val tokens: List[Token]) {
     private def statement(): Stmt = {
         if (matchTypes(TokenType.FOR)) return forStatement()
         if (matchTypes(TokenType.IF)) return ifStatement()
-        if (matchTypes(TokenType.WHILE)) return whileStatement()
         if (matchTypes(TokenType.PRINT)) return printStatement()
-        if (matchTypes(TokenType.LEFT_BRACE)) return Stmt.Block(block())
+        if (matchTypes(TokenType.WHILE)) return whileStatement()
+        if (matchTypes(TokenType.LEFT_BRACE)) return Stmt.Block(block().asScala.toList)
         expressionStatement()
     }
 
-    //theres a lot of stuff in this one there might be an error in my code idk
     private def forStatement(): Stmt = {
         consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.")
         var initializer: Stmt = null
@@ -67,7 +68,7 @@ class Parser (private val tokens: List[Token]) {
         var body = statement()
 
         if (increment != null) {
-            body = Stmt.Block(List(
+            body = new Stmt.Block(scala.List(
                 body,
                 Stmt.Expression(increment)
             ))
@@ -77,20 +78,22 @@ class Parser (private val tokens: List[Token]) {
         body = Stmt.While(condition, body)
 
         if (initializer != null) {
-            body = Stmt.Block(List(initializer, body))
+            body = Stmt.Block(scala.List(initializer, body))
         }
 
         body
     }
+
 
     private def ifStatement(): Stmt = {
         consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.")
         val condition = expression()
         consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.")
         val thenBranch = statement()
-        val elseBranch =
-            if (matchTypes(TokenType.ELSE)) Some(statement())
-            else None
+        var elseBranch: Stmt = null
+        if (matchTypes(ELSE)) {
+            elseBranch = statement()
+        }
         Stmt.If(condition, thenBranch, elseBranch)
     }
 
@@ -126,10 +129,10 @@ class Parser (private val tokens: List[Token]) {
     }
 
     private def block(): List[Stmt] = {
-        var statements = List.empty[Stmt]
+        var statements: List[Stmt] = new ArrayList
 
         while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
-            statements = statements :+ declaration()
+            statements.add(declaration())
         }
 
         consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
@@ -238,13 +241,14 @@ class Parser (private val tokens: List[Token]) {
     }
 
     private def matchTypes(types: TokenType*): Boolean = {
-        for (typ <- types) {
+        var matched = false
+        for (typ <- types if !matched) {
             if (check(typ)) {
                 advance()
-                return true
+                matched = true
             }
         }
-        false
+        matched
     }
 
     private def check(tpe: TokenType): Boolean = {
@@ -298,5 +302,5 @@ class Parser (private val tokens: List[Token]) {
         }
     }
 
-    private class ParseError extends RuntimeException
+    private class ParseError extends RuntimeException //this part might be wrong im not sure by where it wants it nested inside
 }

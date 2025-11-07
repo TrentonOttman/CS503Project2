@@ -19,10 +19,11 @@ object GenerateAst {
                 "Grouping : Expr expression",
                 "Literal  : Any value",
                 "Logical  : Expr left, Token operator, Expr right",
-                "Unary    : Token operator, Expr right"
+                "Unary    : Token operator, Expr right",
+                "Variable : Token name"
             ))
             defineAst(outputDir, "Stmt", List( //added in from chapter 8.1.1
-                "Block      : List<Stmt> statements",
+                "Block      : List[Stmt] statements",
                 "Expression : Expr expression",
                 "If         : Expr condition, Stmt thenBranch," +
                             " Stmt elseBranch",

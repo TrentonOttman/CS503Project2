@@ -12,6 +12,7 @@ import scala.util.control.Breaks._
 import java.util.{Scanner => JavaScanner}
 import scala.compiletime.ops.boolean._
 import com.craftinginterpreters.lox.Scanner
+import scala.jdk.CollectionConverters._
 
 object Lox {
   private val interpreter = new Interpreter()
@@ -65,11 +66,11 @@ object Lox {
     val scanner = new Scanner(source)
     val tokens = scanner.scanTokens()
     val parser = new Parser(tokens)
-    val statements = parser.parse()
+    var statements: List[Stmt] = parser.parse()
     if (Lox.hadError) return
     if (hadRuntimeError) System.exit(70)
-    println(new AstPrinter().print(expression))
-    interpreter.interpret(statements)
+    // println(new AstPrinter().print(expression))
+    interpreter.interpret(statements.asScala.toList)
   }
 
   def error(line: Int, message: String): Unit = {

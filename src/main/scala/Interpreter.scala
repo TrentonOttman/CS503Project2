@@ -1,15 +1,12 @@
 package com.craftinginterpreters.lox
 
-import java.util.List
-
-class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
-
+class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
     private var environment = new Environment()
 
     def interpret(statements: List[Stmt]): Unit = {
         try {
             for (statement <- statements) {
-            execute(statement)
+                execute(statement)
             }
         } catch {
             case error: RuntimeError =>
@@ -110,9 +107,10 @@ class Interpreter extends Expr.Visitor[Any] with Stmt.Visitor[Unit] {
         if (isTruthy(evaluate(stmt.condition))) {
             execute(stmt.thenBranch)
         }
-        else {
-            stmt.elseBranch.foreach(execute)
+        else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch)
         }
+        ()
     }
 
     override def visitPrintStmt(stmt: Stmt.Print): Unit = {
