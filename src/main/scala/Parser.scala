@@ -36,6 +36,7 @@ class Parser (private val tokens: List[Token]) {
         if (matchTypes(TokenType.FOR)) return forStatement()
         if (matchTypes(TokenType.IF)) return ifStatement()
         if (matchTypes(TokenType.PRINT)) return printStatement()
+        if (matchTypes(TokenType.RETURN)) return returnStatement()
         if (matchTypes(TokenType.WHILE)) return whileStatement()
         if (matchTypes(TokenType.LEFT_BRACE)) return Stmt.Block(block().asScala.toList)
         expressionStatement()
@@ -104,6 +105,16 @@ class Parser (private val tokens: List[Token]) {
         Stmt.Print(value)
     }
 
+    private def returnStatement(): Stmt = {
+        var keyword: Token = previous()
+        var value: Expr = null
+        if (!check(SEMICOLON)) {
+            value = expression()
+        }
+        consume(SEMICOLON, "Expect ';' after return value.")
+        Stmt.Return(keyword, value)
+    }
+
     private def varDeclaration(): Stmt = {
         val name = consume(TokenType.IDENTIFIER, "Expect variable name.")
         var initializer: Expr = null
@@ -132,7 +143,7 @@ class Parser (private val tokens: List[Token]) {
     private def function(kind: String): Stmt.Function = {
         val name = consume(TokenType.IDENTIFIER, s"Expect $kind name.")
         consume(TokenType.LEFT_PAREN, s"Expect '(' after $kind name.")
-        val parameters = new java.util.ArrayList[Token]()
+        val parameters: List[Token] = new ArrayList[Token]
         if (!check(TokenType.RIGHT_PAREN)) {
             var first = true
             var continue = true
@@ -151,7 +162,7 @@ class Parser (private val tokens: List[Token]) {
         consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
         consume(TokenType.LEFT_BRACE, s"Expect '{' before $kind body.")
         val body = block()
-        new Stmt.Function(name, parameters, body)
+        new Stmt.Function(name, parameters.asScala.toList, body.asScala.toList)
     }
 
     private def block(): List[Stmt] = {
@@ -251,12 +262,13 @@ class Parser (private val tokens: List[Token]) {
 
     private def call(): Expr = {
         var expr = primary()
-        while (true) {
+        var flag = true
+        while (flag) {
             if (matchTypes(TokenType.LEFT_PAREN)) {
             expr = finishCall(expr)
             }
             else {
-                expr
+                flag = false
             }
         }
         expr

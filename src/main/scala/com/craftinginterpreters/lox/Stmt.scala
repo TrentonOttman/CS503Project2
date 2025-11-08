@@ -11,6 +11,7 @@ object Stmt {
     def visitFunctionStmt(stmt: Function): R
     def visitIfStmt(stmt: If): R
     def visitPrintStmt(stmt: Print): R
+    def visitReturnStmt(stmt: Return): R
     def visitVarStmt(stmt: Var): R
     def visitWhileStmt(stmt: While): R
   }
@@ -56,6 +57,15 @@ object Stmt {
   ) extends Stmt {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitPrintStmt(this)
+    }
+  }
+
+  case class Return(
+    keyword: Token,
+    value: Expr
+  ) extends Stmt {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitReturnStmt(this)
     }
   }
 

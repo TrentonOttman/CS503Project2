@@ -7,6 +7,7 @@ import com.craftinginterpreters.lox.Expr.Unary
 import com.craftinginterpreters.lox.Expr.Assign
 import com.craftinginterpreters.lox.Expr.Logical
 import com.craftinginterpreters.lox.Expr.Variable
+import com.craftinginterpreters.lox.Expr.Call
 
 class AstPrinter extends Expr.Visitor[String] {
     def print(expr: Expr): String = {
@@ -39,6 +40,10 @@ class AstPrinter extends Expr.Visitor[String] {
     }
 
     def visitVariableExpr(expr: Variable): String = {
+        return ""
+    }
+
+    def visitCallExpr(expr: Call): String = {
         return ""
     }
 

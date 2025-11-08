@@ -119,7 +119,7 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
     }
 
     override def visitFunctionStmt(stmt: Stmt.Function): Unit = {
-        val function = new LoxFunction(stmt)
+        val function = new LoxFunction(stmt, environment)
         environment.define(stmt.name.lexeme, function)
         ()
     }
@@ -140,12 +140,19 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
         ()
     }
 
+    override def visitReturnStmt(stmt: Stmt.Return): Unit = {
+        var value: Any = null
+        if (stmt.value != null) value = evaluate(stmt.value)
+        throw new Return(value)
+    }
+
     override def visitVarStmt(stmt: Stmt.Var): Unit = {
         var value: Any = null
         if (stmt.initializer != null) {
             value = evaluate(stmt.initializer)
         }
         environment.define(stmt.name.lexeme, value)
+        ()
     }
 
     override def visitWhileStmt(stmt: Stmt.While): Unit = {
