@@ -22,6 +22,7 @@ class Parser (private val tokens: List[Token]) {
 
     private def declaration(): Stmt = {
         try {
+            if (matchTypes(TokenType.FUN)) return function("function")
             if (matchTypes(TokenType.VAR)) return varDeclaration()
             statement()
         } catch {
@@ -128,6 +129,31 @@ class Parser (private val tokens: List[Token]) {
         Stmt.Expression(expr)
     }
 
+    private def function(kind: String): Stmt.Function = {
+        val name = consume(TokenType.IDENTIFIER, s"Expect $kind name.")
+        consume(TokenType.LEFT_PAREN, s"Expect '(' after $kind name.")
+        val parameters = new java.util.ArrayList[Token]()
+        if (!check(TokenType.RIGHT_PAREN)) {
+            var first = true
+            var continue = true
+            while (continue) {
+                if (!first) advance()
+                first = false
+                if (parameters.size() >= 255) {
+                error(peek(), "Can't have more than 255 parameters.")
+                }
+                parameters.add(
+                consume(TokenType.IDENTIFIER, "Expect parameter name.")
+                )
+                continue = matchTypes(TokenType.COMMA)
+            }
+        }
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
+        consume(TokenType.LEFT_BRACE, s"Expect '{' before $kind body.")
+        val body = block()
+        new Stmt.Function(name, parameters, body)
+    }
+
     private def block(): List[Stmt] = {
         var statements: List[Stmt] = new ArrayList
 
@@ -141,7 +167,6 @@ class Parser (private val tokens: List[Token]) {
 
     private def assignment(): Expr = {
         var expr = or()
-
         if (matchTypes(TokenType.EQUAL)) {
             val equals = previous()
             val value = assignment()
@@ -221,7 +246,38 @@ class Parser (private val tokens: List[Token]) {
             val right = unary()
             return Expr.Unary(operator, right)
         }
-        primary()
+        call()
+    }
+
+    private def call(): Expr = {
+        var expr = primary()
+        while (true) {
+            if (matchTypes(TokenType.LEFT_PAREN)) {
+            expr = finishCall(expr)
+            }
+            else {
+                expr
+            }
+        }
+        expr
+    }
+
+    private def finishCall(callee: Expr): Expr = {
+        import scala.collection.mutable.ListBuffer
+
+        val arguments = ListBuffer[Expr]()
+        if (!check(TokenType.RIGHT_PAREN)) {
+            arguments += expression()
+            while (matchTypes(TokenType.COMMA)) {
+            if (arguments.size >= 255) {
+                error(peek(), "Can't have more than 255 arguments.")
+            }
+            arguments += expression()
+            }
+        }
+
+        val paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.")
+        Expr.Call(callee, paren, arguments.toList)
     }
 
     private def primary(): Expr = {

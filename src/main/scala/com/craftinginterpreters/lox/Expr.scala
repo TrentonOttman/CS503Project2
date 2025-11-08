@@ -8,6 +8,7 @@ object Expr {
   trait Visitor[R] {
     def visitAssignExpr(expr: Assign): R
     def visitBinaryExpr(expr: Binary): R
+    def visitCallExpr(expr: Call): R
     def visitGroupingExpr(expr: Grouping): R
     def visitLiteralExpr(expr: Literal): R
     def visitLogicalExpr(expr: Logical): R
@@ -31,6 +32,16 @@ object Expr {
   ) extends Expr {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitBinaryExpr(this)
+    }
+  }
+
+  case class Call(
+    callee: Expr,
+    paren: Token,
+    arguments: List[Expr]
+  ) extends Expr {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitCallExpr(this)
     }
   }
 

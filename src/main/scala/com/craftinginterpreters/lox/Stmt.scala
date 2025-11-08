@@ -8,6 +8,7 @@ object Stmt {
   trait Visitor[R] {
     def visitBlockStmt(stmt: Block): R
     def visitExpressionStmt(stmt: Expression): R
+    def visitFunctionStmt(stmt: Function): R
     def visitIfStmt(stmt: If): R
     def visitPrintStmt(stmt: Print): R
     def visitVarStmt(stmt: Var): R
@@ -27,6 +28,16 @@ object Stmt {
   ) extends Stmt {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitExpressionStmt(this)
+    }
+  }
+
+  case class Function(
+    name: Token,
+    params: List[Token],
+    body: List[Stmt]
+  ) extends Stmt {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitFunctionStmt(this)
     }
   }
 

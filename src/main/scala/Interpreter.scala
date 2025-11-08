@@ -1,7 +1,22 @@
 package com.craftinginterpreters.lox
 
+import java.util.ArrayList
+//import scala.collection.mutable.ListBuffer
+//import java.util.List //im not sure if we need this?? we didnt use it before but its in the textbook that it should already be here
+
 class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
-    private var environment = new Environment()
+    val globals = new Environment()
+    private var environment: Environment = globals
+
+    {
+        globals.define("clock", new LoxCallable {
+        override def arity(): Int = 0
+        override def call(interpreter: Interpreter, arguments: java.util.List[Any]): Any = {
+            System.currentTimeMillis().toDouble / 1000.0
+        }
+        override def toString: String = "<native fn>"
+        })
+    }
 
     def interpret(statements: List[Stmt]): Unit = {
         try {
@@ -103,6 +118,12 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
         ()
     }
 
+    override def visitFunctionStmt(stmt: Stmt.Function): Unit = {
+        val function = new LoxFunction(stmt)
+        environment.define(stmt.name.lexeme, function)
+        ()
+    }
+
     override def visitIfStmt(stmt: Stmt.If): Unit = {
         if (isTruthy(evaluate(stmt.condition))) {
             execute(stmt.thenBranch)
@@ -177,6 +198,22 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
                 isEqual(left, right)
             case _ => null
         }
+    }
+
+    override def visitCallExpr(expr: Expr.Call): Any = {
+        val callee = evaluate(expr.callee)
+        val arguments = new java.util.ArrayList[Any]()
+        for (argument <- expr.arguments) {
+            arguments.add(evaluate(argument))
+        }
+        if (!callee.isInstanceOf[LoxCallable]) {
+            throw new RuntimeError(expr.paren, "Can only call functions and classes.")
+        }
+        val function = callee.asInstanceOf[LoxCallable]
+        if (arguments.size() != function.arity()) {
+            throw new RuntimeError(expr.paren, s"Expected ${function.arity()} arguments but got ${arguments.size()}.")
+        }
+        function.call(this, arguments)
     }
 
     private def checkNumberOperands(operator: Token, left: Any, right: Any): Unit = {
