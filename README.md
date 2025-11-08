@@ -1,5 +1,5 @@
 # CS503 Project 2 Lox
-Current implementation ends at the start of chapter 10
+Current implementation ends at the start of chapter 12
 
 Run with sbt run
 Run fib.lox with sbt "run fib.lox"

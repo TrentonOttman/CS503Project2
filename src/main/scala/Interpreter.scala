@@ -1,12 +1,16 @@
 package com.craftinginterpreters.lox
 
 import java.util.ArrayList
+import java.util.HashMap
+import java.util.Map
+import scala.collection.immutable.HashMap
 //import scala.collection.mutable.ListBuffer
 //import java.util.List //im not sure if we need this?? we didnt use it before but its in the textbook that it should already be here
 
 class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
     val globals = new Environment()
     private var environment: Environment = globals
+    private var locals: Map[Expr, Integer] = new java.util.HashMap
 
     {
         globals.define("clock", new LoxCallable {
@@ -56,7 +60,16 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
     }
 
     override def visitVariableExpr(expr: Expr.Variable): Any = {
-        environment.get(expr.name)
+        lookUpVariable(expr.name, expr)
+    }
+
+    private def lookUpVariable(name: Token, expr: Expr): Any = {
+        var distance: Integer = locals.get(expr)
+        if (distance != null) {
+            return environment.getAt(distance, name.lexeme)
+        } else {
+            return globals.get(name)
+        }
     }
 
     private def isTruthy(value: Any): Boolean = {
@@ -95,6 +108,10 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
 
     private def execute(stmt: Stmt): Unit = {
         stmt.accept(this)
+    }
+
+    private[lox] def resolve(expr: Expr, depth: Int): Unit = {
+        locals.put(expr, depth)
     }
 
     def executeBlock(statements: List[Stmt], environment: Environment): Unit = {
@@ -163,6 +180,12 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
 
     override def visitAssignExpr(expr: Expr.Assign): Any = {
         val value = evaluate(expr.value)
+        var distance: Integer = locals.get(expr)
+        if (distance != null) {
+            environment.assignAt(distance, expr.name, value)
+        } else {
+            globals.assign(expr.name, value)
+        }
         environment.assign(expr.name, value)
         value
     }

@@ -12,6 +12,22 @@ class Environment(val enclosing: Environment = null) {
         values(name) = value
     }
 
+    def ancestor(distance: Int): Environment = {
+        var environment: Environment = this
+        for (i <- (0 until distance)) {
+            environment = environment.enclosing
+        }
+        environment
+    }
+
+    def getAt(distance: Int, name: String): Any = {
+        return ancestor(distance).values.getOrElse(name, null)
+    }
+
+    def assignAt(distance: Int, name: Token, value: Any): Unit = {
+        ancestor(distance).values.put(name.lexeme, value)
+    }
+
     def get(name: Token): Any = {
         values.get(name.lexeme) match {
             case Some(value) => value

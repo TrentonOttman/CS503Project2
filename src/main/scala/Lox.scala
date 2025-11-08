@@ -69,6 +69,9 @@ object Lox {
     var statements: List[Stmt] = parser.parse()
     if (Lox.hadError) return
     if (hadRuntimeError) System.exit(70)
+    var resolver: Resolver = new Resolver(interpreter)
+    resolver.resolve(statements)
+    if (hadError) return
     // println(new AstPrinter().print(expression))
     interpreter.interpret(statements.asScala.toList)
   }
