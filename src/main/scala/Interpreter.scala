@@ -4,6 +4,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Map
 import scala.collection.immutable.HashMap
+import scala.jdk.CollectionConverters._ 
 //import scala.collection.mutable.ListBuffer
 //import java.util.List //im not sure if we need this?? we didnt use it before but its in the textbook that it should already be here
 
@@ -39,15 +40,27 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
 
     override def visitLogicalExpr(expr: Expr.Logical): Any = {
         val left = evaluate(expr.left)
-
         if (expr.operator.tokenType == TokenType.OR) {
             if (isTruthy(left)) return left
         } 
         else {
             if (!isTruthy(left)) return left
         }
-
         evaluate(expr.right)
+    }
+
+    override def visitSetExpr(expr: Expr.Set): Any = {
+        val obj = evaluate(expr.obj)
+        if (!obj.isInstanceOf[LoxInstance]) {
+            throw new RuntimeError(expr.name, "Only instances have fields.")
+        }
+        val value = evaluate(expr.value)
+        obj.asInstanceOf[LoxInstance].set(expr.name, value)
+        value
+    }
+
+    override def visitThisExpr(expr: Expr.This): Any = {
+        lookUpVariable(expr.keyword, expr)
     }
 
     override def visitUnaryExpr(expr: Expr.Unary): Any = {
@@ -130,13 +143,32 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
         executeBlock(stmt.statements, new Environment(environment))
     }
 
+    override def visitClassStmt(stmt: Stmt.Class): Unit = {
+        var superclass: Any = null
+        if (stmt.superclass != null) {
+            superclass = evaluate(stmt.superclass)
+            if (!superclass.isInstanceOf[LoxClass]) {
+                throw new RuntimeError(stmt.superclass.name, "Superclass must be a class.")
+            }
+        }
+        environment.define(stmt.name.lexeme, null)
+        val methods = new java.util.HashMap[String, LoxFunction]()
+        for (method <- stmt.methods.asScala) {
+            val function = new LoxFunction(method, environment, false)
+            methods.put(method.name.lexeme, function)
+        }
+        val klass = new LoxClass(stmt.name.lexeme,(LoxClass)superclass, methods)
+        environment.assign(stmt.name, klass)
+    }
+
+
     override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {
         evaluate(stmt.expression)
         ()
     }
 
     override def visitFunctionStmt(stmt: Stmt.Function): Unit = {
-        val function = new LoxFunction(stmt, environment)
+        val function = new LoxFunction(stmt, environment, false)
         environment.define(stmt.name.lexeme, function)
         ()
     }
@@ -244,6 +276,14 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
             throw new RuntimeError(expr.paren, s"Expected ${function.arity()} arguments but got ${arguments.size()}.")
         }
         function.call(this, arguments)
+    }
+
+    override def visitGetExpr(expr: Expr.Get): Any = {
+        val obj = evaluate(expr.obj)
+        obj match {
+            case instance: LoxInstance => instance.get(expr.name)
+            case _ => throw new RuntimeError(expr.name, "Only instances have properties.")
+        }
     }
 
     private def checkNumberOperands(operator: Token, left: Any, right: Any): Unit = {

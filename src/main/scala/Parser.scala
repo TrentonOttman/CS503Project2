@@ -22,6 +22,7 @@ class Parser (private val tokens: List[Token]) {
 
     private def declaration(): Stmt = {
         try {
+            if (matchTypes(TokenType.CLASS)) return classDeclaration()
             if (matchTypes(TokenType.FUN)) return function("function")
             if (matchTypes(TokenType.VAR)) return varDeclaration()
             statement()
@@ -31,6 +32,23 @@ class Parser (private val tokens: List[Token]) {
             null
         }
     }
+
+    private def classDeclaration(): Stmt = {
+        val name = consume(TokenType.IDENTIFIER, "Expect class name.")
+        var superclass: Expr.Variable = null
+        if (matchTypes(TokenType.LESS)) {
+            consume(TokenType.IDENTIFIER, "Expect superclass name.")
+            superclass = new Expr.Variable(previous())
+        }
+        consume(TokenType.LEFT_BRACE, "Expect '{' before class body.")
+        val methods = new java.util.ArrayList[Stmt.Function]()
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            methods.add(function("method"))
+        }
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.")
+        new Stmt.Class(name, superclass methods)
+    }
+    
 
     private def statement(): Stmt = {
         if (matchTypes(TokenType.FOR)) return forStatement()
@@ -182,10 +200,11 @@ class Parser (private val tokens: List[Token]) {
             val equals = previous()
             val value = assignment()
             expr match {
-            case variable: Expr.Variable =>
-                val name = variable.name
-                return Expr.Assign(name, value)
-            case _ => error(equals, "Invalid assignment target.")
+                case variable: Expr.Variable =>
+                    val name = variable.name
+                    return Expr.Assign(name, value)
+                case get: Expr.Get => return Expr.Set(get.obj, get.name, value)
+                case _ => error(equals, "Invalid assignment target.")
             }
         }
         expr
@@ -267,6 +286,10 @@ class Parser (private val tokens: List[Token]) {
             if (matchTypes(TokenType.LEFT_PAREN)) {
             expr = finishCall(expr)
             }
+            else if (matchTypes(TokenType.DOT)) {
+                val name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.")
+                expr = Expr.Get(expr, name)
+            }
             else {
                 flag = false
             }
@@ -297,6 +320,7 @@ class Parser (private val tokens: List[Token]) {
         if (matchTypes(TokenType.TRUE))  return Expr.Literal(true)
         if (matchTypes(TokenType.NIL))   return Expr.Literal(null)
         if (matchTypes(TokenType.NUMBER, TokenType.STRING)) return Expr.Literal(previous().literal)
+        if (matchTypes(TokenType.THIS)) return Expr.This(previous())
         if (matchTypes(TokenType.IDENTIFIER)) {
             return Expr.Variable(previous())
         }

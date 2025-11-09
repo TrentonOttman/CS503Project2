@@ -9,9 +9,12 @@ object Expr {
     def visitAssignExpr(expr: Assign): R
     def visitBinaryExpr(expr: Binary): R
     def visitCallExpr(expr: Call): R
+    def visitGetExpr(expr: Get): R
     def visitGroupingExpr(expr: Grouping): R
     def visitLiteralExpr(expr: Literal): R
     def visitLogicalExpr(expr: Logical): R
+    def visitSetExpr(expr: Set): R
+    def visitThisExpr(expr: This): R
     def visitUnaryExpr(expr: Unary): R
     def visitVariableExpr(expr: Variable): R
   }
@@ -45,6 +48,15 @@ object Expr {
     }
   }
 
+  case class Get(
+    obj: Expr,
+    name: Token
+  ) extends Expr {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitGetExpr(this)
+    }
+  }
+
   case class Grouping(
     expression: Expr
   ) extends Expr {
@@ -68,6 +80,24 @@ object Expr {
   ) extends Expr {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitLogicalExpr(this)
+    }
+  }
+
+  case class Set(
+    obj: Expr,
+    name: Token,
+    value: Expr
+  ) extends Expr {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitSetExpr(this)
+    }
+  }
+
+  case class This(
+    keyword: Token
+  ) extends Expr {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitThisExpr(this)
     }
   }
 

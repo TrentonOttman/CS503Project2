@@ -23,9 +23,14 @@ import com.craftinginterpreters.lox.Expr.Unary
 class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Visitor[Unit] {
     private val scopes: Stack[Map[String, Boolean]] = new Stack()
     private var currentFunction: FunctionType = FunctionType.NONE
+    private var currentClass: ClassType = ClassType.NONE
 
     private[lox] enum FunctionType {
-        case NONE, FUNCTION
+        case NONE, FUNCTION, INITIALIZER, METHOD
+    }
+
+    private[lox] enum ClassType {
+        case NONE, CLASS
     }
 
     private def beginScope(): Unit = {
@@ -87,6 +92,31 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
         ()
     }
 
+    override def visitClassStmt(stmt: Stmt.Class): Unit = {
+        val enclosingClass = currentClass
+        currentClass = ClassType.CLASS
+        declare(stmt.name)
+        define(stmt.name)
+        if (stmt.superclass != null &&
+            stmt.name.lexeme == stmt.superclass.name.lexeme) {
+            Lox.error(stmt.superclass.name, "A class can't inherit from itself.")
+        }
+        if (stmt.superclass != null) {
+            resolve(stmt.superclass)
+        }
+        beginScope()
+        scopes.peek().put("this", true)
+        for (method <- stmt.methods.asScala) {
+            val declaration = FunctionType.METHOD
+            if (method.name.lexeme == "init") {
+                val declaration = FunctionType.METHOD
+            }
+            resolveFunction(method, declaration)
+        }
+        endScope()
+        currentClass = enclosingClass
+    }
+
     override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {
         resolve(stmt.expression)
         ()
@@ -117,6 +147,9 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
             Lox.error(stmt.keyword, "Can't return from top-level code.")
         }
         if (stmt.value != null) {
+            if (currentFunction == FunctionType.INITIALIZER) {
+                Lox.error(stmt.keyword, "Can't return a value from an initializer.")
+            }
             resolve(stmt.value)
         }
         ()
@@ -157,6 +190,10 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
         ()
     }
 
+    override def visitGetExpr(expr: Expr.Get): Unit = {
+        resolve(expr.obj)
+    }
+
     override def visitGroupingExpr(expr: Expr.Grouping): Unit = {
         resolve(expr.expression)
         ()
@@ -170,6 +207,18 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
         resolve(expr.left)
         resolve(expr.right)
         ()
+    }
+
+    override def visitSetExpr(expr: Expr.Set): Unit = {
+        resolve(expr.value)
+        resolve(expr.obj)
+    }
+
+    override def visitThisExpr(expr: Expr.This): Unit = {
+        if (currentClass == ClassType.NONE) {
+            Lox.error(expr.keyword, "Can't use 'this' outside of a class.")
+        }
+        resolveLocal(expr, expr.keyword)
     }
 
     override def visitUnaryExpr(expr: Expr.Unary): Unit = {
