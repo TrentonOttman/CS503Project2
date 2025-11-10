@@ -8,6 +8,10 @@ import com.craftinginterpreters.lox.Expr.Assign
 import com.craftinginterpreters.lox.Expr.Logical
 import com.craftinginterpreters.lox.Expr.Variable
 import com.craftinginterpreters.lox.Expr.Call
+import com.craftinginterpreters.lox.Expr.Get
+import com.craftinginterpreters.lox.Expr.Set
+import com.craftinginterpreters.lox.Expr.Super
+import com.craftinginterpreters.lox.Expr.This
 
 class AstPrinter extends Expr.Visitor[String] {
     def print(expr: Expr): String = {
@@ -44,6 +48,22 @@ class AstPrinter extends Expr.Visitor[String] {
     }
 
     def visitCallExpr(expr: Call): String = {
+        return ""
+    }
+
+    def visitGetExpr(expr: Get): String = {
+        return ""
+    }
+
+    def visitSetExpr(expr: Set): String = {
+        return ""
+    }
+
+    def visitSuperExpr(expr: Super): String = {
+        return ""
+    }
+
+    def visitThisExpr(expr: This): String = {
         return ""
     }
 
