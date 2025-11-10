@@ -30,7 +30,7 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
     }
 
     private[lox] enum ClassType {
-        case NONE, CLASS
+        case NONE, CLASS, SUBCLASS
     }
 
     private def beginScope(): Unit = {
@@ -102,11 +102,16 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
             Lox.error(stmt.superclass.name, "A class can't inherit from itself.")
         }
         if (stmt.superclass != null) {
+            currentClass = ClassType.SUBCLASS
             resolve(stmt.superclass)
+        }
+        if (stmt.superclass != null) {
+            beginScope()
+            scopes.peek().put("super", true)
         }
         beginScope()
         scopes.peek().put("this", true)
-        for (method <- stmt.methods.asScala) {
+        for (method <- stmt.methods) {
             val declaration = FunctionType.METHOD
             if (method.name.lexeme == "init") {
                 val declaration = FunctionType.METHOD
@@ -114,6 +119,7 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
             resolveFunction(method, declaration)
         }
         endScope()
+        if (stmt.superclass != null) endScope()
         currentClass = enclosingClass
     }
 
@@ -212,6 +218,16 @@ class Resolver(val interpreter: Interpreter) extends Expr.Visitor[Unit], Stmt.Vi
     override def visitSetExpr(expr: Expr.Set): Unit = {
         resolve(expr.value)
         resolve(expr.obj)
+    }
+
+    override def visitSuperExpr(expr: Expr.Super): Unit = {
+        if (currentClass == ClassType.NONE) {
+            Lox.error(expr.keyword, "Can't use 'super' outside of a class.")
+        } 
+        else if (currentClass != ClassType.SUBCLASS) {
+            Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.")
+        }
+        resolveLocal(expr, expr.keyword)
     }
 
     override def visitThisExpr(expr: Expr.This): Unit = {

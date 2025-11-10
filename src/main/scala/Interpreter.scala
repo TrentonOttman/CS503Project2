@@ -152,15 +152,29 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
             }
         }
         environment.define(stmt.name.lexeme, null)
+        if (stmt.superclass != null) {
+            environment = new Environment(environment)
+            environment.define("super", superclass)
+        }
         val methods = new java.util.HashMap[String, LoxFunction]()
-        for (method <- stmt.methods.asScala) {
+        for (method <- stmt.methods) {
             val function = new LoxFunction(method, environment, false)
             methods.put(method.name.lexeme, function)
         }
-        val klass = new LoxClass(stmt.name.lexeme,(LoxClass)superclass, methods)
+        val klass = new LoxClass(stmt.name.lexeme, superclass.asInstanceOf[LoxClass], methods)
+        if (superclass != null) {
+            environment = environment.enclosing
+        }
         environment.assign(stmt.name, klass)
     }
 
+    override def visitSuperExpr(expr: Expr.Super): Any = {
+        val distance = locals.get(expr)
+        val superclass = environment.getAt(distance, "super").asInstanceOf[LoxClass]
+        val obj = environment.getAt(distance - 1, "this").asInstanceOf[LoxInstance]
+        val method = superclass.findMethod(expr.method.lexeme)
+        if (method == null) throw new RuntimeError(expr.method, s"Undefined property '${expr.method.lexeme}'.")
+    }
 
     override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {
         evaluate(stmt.expression)

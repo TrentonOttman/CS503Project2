@@ -14,6 +14,7 @@ object Expr {
     def visitLiteralExpr(expr: Literal): R
     def visitLogicalExpr(expr: Logical): R
     def visitSetExpr(expr: Set): R
+    def visitSuperExpr(expr: Super): R
     def visitThisExpr(expr: This): R
     def visitUnaryExpr(expr: Unary): R
     def visitVariableExpr(expr: Variable): R
@@ -90,6 +91,15 @@ object Expr {
   ) extends Expr {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitSetExpr(this)
+    }
+  }
+
+  case class Super(
+    keyword: Token,
+    method: Token
+  ) extends Expr {
+    def accept[R](visitor: Visitor[R]): R = {
+      visitor.visitSuperExpr(this)
     }
   }
 

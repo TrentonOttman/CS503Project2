@@ -46,7 +46,7 @@ class Parser (private val tokens: List[Token]) {
             methods.add(function("method"))
         }
         consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.")
-        new Stmt.Class(name, superclass methods)
+        new Stmt.Class(name, superclass, methods.asScala.toList)
     }
     
 
@@ -319,6 +319,12 @@ class Parser (private val tokens: List[Token]) {
         if (matchTypes(TokenType.FALSE)) return Expr.Literal(false)
         if (matchTypes(TokenType.TRUE))  return Expr.Literal(true)
         if (matchTypes(TokenType.NIL))   return Expr.Literal(null)
+        if (matchTypes(TokenType.SUPER)) {
+            val keyword = previous()
+            consume(TokenType.DOT, "Expect '.' after 'super'.")
+            val method = consume(TokenType.IDENTIFIER, "Expect superclass method name.")
+            return Expr.Super(keyword, method)
+        }
         if (matchTypes(TokenType.NUMBER, TokenType.STRING)) return Expr.Literal(previous().literal)
         if (matchTypes(TokenType.THIS)) return Expr.This(previous())
         if (matchTypes(TokenType.IDENTIFIER)) {

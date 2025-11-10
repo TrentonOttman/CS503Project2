@@ -8,7 +8,6 @@ object Stmt {
   trait Visitor[R] {
     def visitBlockStmt(stmt: Block): R
     def visitClassStmt(stmt: Class): R
-    def visitClassStmt(stmt: Class): R
     def visitExpressionStmt(stmt: Expression): R
     def visitFunctionStmt(stmt: Function): R
     def visitIfStmt(stmt: If): R
@@ -30,15 +29,6 @@ object Stmt {
     name: Token,
     superclass: Expr.Variable,
     methods: List[Stmt.Function]
-  ) extends Stmt {
-    def accept[R](visitor: Visitor[R]): R = {
-      visitor.visitClassStmt(this)
-    }
-  }
-
-  case class Class(
-    name: Token,
-    methods: java.util.List[Stmt.Function]
   ) extends Stmt {
     def accept[R](visitor: Visitor[R]): R = {
       visitor.visitClassStmt(this)
