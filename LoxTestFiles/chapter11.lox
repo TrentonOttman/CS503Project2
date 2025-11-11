@@ -1,0 +1,9 @@
+redeclare_local | fun f(){ var a = 1; var a = 2; } | ERROR
+read_own_init | var a = a; | ERROR
+shadow_outer | var a = "outer"; { var a = "inner"; print a; } | inner
+resolve_upvalue | var a = "global"; fun outer(){ fun inner(){ print a; } inner(); } outer(); | global
+assign_upvalue | var a = 1; fun outer(){ fun inner(){ a = 2; } inner(); } outer(); print a; | 2
+self_reference_func | fun f(){ f(); } | ERROR
+block_shadow | var a = 1; { var a = 2; print a; } print a; | 2\n1
+undefined_var | print b; | ERROR
+too_many_locals | { var a1=1; var a2=2; var a3=3; var a4=4; var a5=5; print a5; } | 5

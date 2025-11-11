@@ -1,0 +1,10 @@
+if_true | if (true) print 1; | 1
+if_false | if (false) print 1; | 
+if_else | if (false) print 1; else print 2; | 2
+nested_if | if (true) { if (false) print 1; else print 2; } | 2
+while_loop | var i = 0; while (i < 3) { print i; i = i + 1; } | 0\n1\n2
+while_false | while (false) print 1; | 
+for_loop | for (var i = 0; i < 3; i = i + 1) print i; | 0\n1\n2
+break_sim | var i = 0; while (i < 3) { print i; i = i + 1; if (i == 2) i = 3; } | 0\n1
+and_short | print false and (1/0); | false
+or_short | print true or (1/0); | true

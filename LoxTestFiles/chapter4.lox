@@ -1,0 +1,27 @@
+identifier_simple | print foo; | 
+number_int | print 123; | 123
+number_float | print 12.34; | 12.34
+string_basic | print "lox"; | lox
+string_empty | print ""; | 
+plus_operator | print 1 + 2; | 3
+minus_operator | print 5 - 3; | 2
+star_operator | print 2 * 4; | 8
+slash_operator | print 8 / 2; | 4
+bang_equal | print 3 != 2; | true
+equal_equal | print 3 == 3; | true
+less | print 2 < 3; | true
+less_equal | print 3 <= 3; | true
+greater | print 4 > 2; | true
+greater_equal | print 3 >= 3; | true
+comment_inline | print 1; // comment | 1
+and_keyword | print true and false; | false
+or_keyword | print true or false; | true
+var_keyword | var a = 1; print a; | 1
+if_keyword | if (true) print 1; | 1
+else_keyword | if (false) print 1; else print 2; | 2
+nil_keyword | print nil; | nil
+true_keyword | print true; | true
+false_keyword | print false; | false
+while_keyword | var i = 0; while (i < 1) { print i; i = i + 1; } | 0
+identifier_long | var longName123 = 5; print longName123; | 5
+unterminated_string | print "oops; | Error

@@ -1,0 +1,8 @@
+class_basic | class Foo {} print Foo; | Foo
+class_init | class Foo {} var f = Foo(); print f; | Foo instance
+field_assign | class Foo {} var f = Foo(); f.x = 10; print f.x; | 10
+method_define | class Foo { greet(){ print "hi"; } } Foo().greet(); | hi
+this_use | class Foo { init(x){ this.x = x; } show(){ print this.x; } } var f = Foo(5); f.show(); | 5
+multiple_fields | class P{init(x,y){this.x=x;this.y=y;} sum(){print this.x+this.y;} } P(2,3).sum(); | 5
+independent_instances | class C{init(v){this.v=v;}} var a=C(1); var b=C(2); print a.v; print b.v; | 1\n2
+method_chain | class C{init(x){this.x=x;} inc(){this.x=this.x+1;} show(){print this.x;} } var c=C(1); c.inc(); c.show(); | 2

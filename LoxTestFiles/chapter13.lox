@@ -1,0 +1,9 @@
+inherit_basic | class A{hi(){print "A";}} class B < A {} B().hi(); | A
+override_method | class A{hi(){print "A";}} class B < A{hi(){print "B";}} B().hi(); | B
+call_super | class A{hi(){print "A";}} class B < A{hi(){super.hi(); print "B";}} B().hi(); | A\nB
+multi_level | class A{hi(){print "A";}} class B < A{} class C < B{} C().hi(); | A
+field_inherited | class A{init(){this.x=1;}} class B<A{} var b=B(); print b.x; | 1
+super_chain | class A{hi(){print "A";}} class B<A{hi(){super.hi(); print "B";}} class C<B{hi(){super.hi(); print "C";}} C().hi(); | A\nB\nC
+init_inherit | class A{init(){this.x=10;}} class B<A{} print B().x; | 10
+super_invalid | class A{} var b = super; | ERROR
+no_superclass | class B < A {} | ERROR

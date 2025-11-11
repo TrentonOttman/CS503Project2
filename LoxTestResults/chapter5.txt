@@ -1,0 +1,43 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter5.lox
+
+PASS literal_number | Expr: print 1; | Expected: 1 | Got: 1
+PASS literal_string | Expr: print "hi"; | Expected: hi | Got: hi
+PASS grouping_simple | Expr: print (1 + 2) * 3; | Expected: 9 | Got: 9
+PASS unary_negation | Expr: print -1; | Expected: -1 | Got: -1
+PASS unary_not | Expr: print !false; | Expected: true | Got: true
+PASS binary_add | Expr: print 2 + 3; | Expected: 5 | Got: 5
+PASS binary_sub | Expr: print 9 - 4; | Expected: 5 | Got: 5
+PASS binary_mul | Expr: print 3 * 3; | Expected: 9 | Got: 9
+PASS binary_div | Expr: print 8 / 4; | Expected: 2 | Got: 2
+PASS comparison_lt | Expr: print 1 < 2; | Expected: true | Got: true
+PASS comparison_le | Expr: print 2 <= 2; | Expected: true | Got: true
+PASS comparison_gt | Expr: print 3 > 1; | Expected: true | Got: true
+PASS comparison_ge | Expr: print 3 >= 3; | Expected: true | Got: true
+PASS equality_true | Expr: print 5 == 5; | Expected: true | Got: true
+PASS equality_false | Expr: print 5 == 4; | Expected: false | Got: false
+PASS inequality_true | Expr: print 5 != 4; | Expected: true | Got: true
+PASS inequality_false | Expr: print 5 != 5; | Expected: false | Got: false
+PASS string_concat | Expr: print "a" + "b"; | Expected: ab | Got: ab
+PASS grouping_nested | Expr: print (1 + (2 * (3 + 4))); | Expected: 15 | Got: 15
+PASS expression_precedence | Expr: print 1 + 2 * 3; | Expected: 7 | Got: 7
+PASS left_associative | Expr: print 10 - 3 - 2; | Expected: 5 | Got: 5
+PASS division_prec | Expr: print 8 / 2 * 2; | Expected: 8 | Got: 8
+PASS compare_mix | Expr: print 3 + 4 > 6; | Expected: true | Got: true
+PASS boolean_and | Expr: print true and false; | Expected: false | Got: false
+PASS boolean_or | Expr: print true or false; | Expected: true | Got: true
+PASS boolean_mix | Expr: print (true or false) and true; | Expected: true | Got: true
+PASS negate_true | Expr: print !true; | Expected: false | Got: false
+PASS negate_false | Expr: print !false; | Expected: true | Got: true
+PASS nil_equality | Expr: print nil == nil; | Expected: true | Got: true
+
+==================================================
+SUMMARY
+==================================================
+Total:  29
+Passed: 29
+Failed: 0
+Rate:   100.0%
+==================================================

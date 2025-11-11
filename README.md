@@ -2,6 +2,7 @@
 - Trenton Ottman and Daniel Lecorchick
 - CS503 Section 001
 - This file contains README, Test Plan, Test Results, and Scala Feedback for our Lox interpreter
+- Based on the book Crafting Interpreters by Robert Nystrom
 - https://github.com/TrentonOttman/CS503Project2
 
 ## README 
@@ -13,7 +14,7 @@ Lox is a programming languange created by Robert Nystrom that has basic function
 ### Required Software
 - Java (specifically 17.0.12 was used, but any modern version should work)
 - Scala sbt (1.11.7) https://www.scala-sbt.org/download/
-- Metals VSCode Extension
+- Scala (Metals) VSCode Extension
 
 ### Organization of Code
 - src/main/scala contains all of the Scala source code, a tool directory, and a com/craftinginterpreters/lox directory.

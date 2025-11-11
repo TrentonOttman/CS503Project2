@@ -1,0 +1,37 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter7.lox
+
+PASS add_int | Expr: print 1 + 2; | Expected: 3 | Got: 3
+PASS add_float | Expr: print 1.5 + 2.5; | Expected: 4 | Got: 4
+PASS subtract | Expr: print 10 - 4; | Expected: 6 | Got: 6
+PASS multiply | Expr: print 2 * 3; | Expected: 6 | Got: 6
+PASS divide | Expr: print 8 / 2; | Expected: 4 | Got: 4
+PASS divide_float | Expr: print 7 / 2; | Expected: 3.5 | Got: 3.5
+PASS comparison | Expr: print 5 > 2; | Expected: true | Got: true
+PASS equal_str | Expr: print "hi" == "hi"; | Expected: true | Got: true
+PASS not_equal | Expr: print "hi" != "bye"; | Expected: true | Got: true
+PASS equal_num | Expr: print 2 == 2; | Expected: true | Got: true
+PASS equal_bool | Expr: print true == true; | Expected: true | Got: true
+PASS nil_check | Expr: print nil == nil; | Expected: true | Got: true
+PASS not_nil | Expr: print nil != nil; | Expected: false | Got: false
+PASS negate_num | Expr: print -3; | Expected: -3 | Got: -3
+PASS not_logic | Expr: print !false; | Expected: true | Got: true
+PASS truthy | Expr: print !!"hi"; | Expected: true | Got: true
+PASS falsy_nil | Expr: print !nil; | Expected: true | Got: true
+PASS error_div_zero | Expr: print 1 / 0; | Expected: Infinity | Got: Infinity
+Operands must be numbers.
+[line 1]
+PASS error_type | Expr: print "a" - 1; | Expected:  | Got:
+PASS combine_logic | Expr: print (true and false) or true; | Expected: true | Got: true
+PASS complex_math | Expr: print (2 + 3) * (4 - 1); | Expected: 15 | Got: 15
+
+==================================================
+SUMMARY
+==================================================
+Total:  21
+Passed: 21
+Failed: 0
+Rate:   100.0%
+==================================================

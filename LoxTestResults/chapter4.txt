@@ -1,0 +1,45 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter4.lox
+
+Undefined variable 'foo'.
+[line 1]
+PASS identifier_simple | Expr: print foo; | Expected:  | Got:
+PASS number_int | Expr: print 123; | Expected: 123 | Got: 123
+PASS number_float | Expr: print 12.34; | Expected: 12.34 | Got: 12.34
+PASS string_basic | Expr: print "lox"; | Expected: lox | Got: lox
+PASS string_empty | Expr: print ""; | Expected:  | Got:
+PASS plus_operator | Expr: print 1 + 2; | Expected: 3 | Got: 3
+PASS minus_operator | Expr: print 5 - 3; | Expected: 2 | Got: 2
+PASS star_operator | Expr: print 2 * 4; | Expected: 8 | Got: 8
+PASS slash_operator | Expr: print 8 / 2; | Expected: 4 | Got: 4
+PASS bang_equal | Expr: print 3 != 2; | Expected: true | Got: true
+PASS equal_equal | Expr: print 3 == 3; | Expected: true | Got: true
+PASS less | Expr: print 2 < 3; | Expected: true | Got: true
+PASS less_equal | Expr: print 3 <= 3; | Expected: true | Got: true
+PASS greater | Expr: print 4 > 2; | Expected: true | Got: true
+PASS greater_equal | Expr: print 3 >= 3; | Expected: true | Got: true
+PASS comment_inline | Expr: print 1; // comment | Expected: 1 | Got: 1
+PASS and_keyword | Expr: print true and false; | Expected: false | Got: false
+PASS or_keyword | Expr: print true or false; | Expected: true | Got: true
+PASS var_keyword | Expr: var a = 1; print a; | Expected: 1 | Got: 1
+PASS if_keyword | Expr: if (true) print 1; | Expected: 1 | Got: 1
+PASS else_keyword | Expr: if (false) print 1; else print 2; | Expected: 2 | Got: 2
+PASS nil_keyword | Expr: print nil; | Expected: nil | Got: nil
+PASS true_keyword | Expr: print true; | Expected: true | Got: true
+PASS false_keyword | Expr: print false; | Expected: false | Got: false
+PASS while_keyword | Expr: var i = 0; while (i < 1) { print i; i = i + 1; } | Expected: 0 | Got: 0
+PASS identifier_long | Expr: var longName123 = 5; print longName123; | Expected: 5 | Got: 5
+PASS unterminated_string | Expr: print "oops; | Expected: Error | Got: [line 1] Error: Unterminated string.
+[line 1] Error at end: Expect expression.
+ERROR: Cannot invoke "com.craftinginterpreters.lox.Stmt.accept(com.craftinginterpreters.lox.Stmt$Visitor)" because "stmt" is null
+
+==================================================
+SUMMARY
+==================================================
+Total:  27
+Passed: 27
+Failed: 0
+Rate:   100.0%
+==================================================

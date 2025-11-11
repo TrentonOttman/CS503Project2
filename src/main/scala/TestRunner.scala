@@ -63,7 +63,10 @@ object TestRunner {
     val actual = output.trim
     val expected = test.expected.trim
 
-    if (actual == expected) {
+    val isErrorExpected = expected.equalsIgnoreCase("ERROR") || expected.startsWith("ERROR")
+    val isErrorOutput = actual.toLowerCase.contains("error")
+
+    if ((isErrorExpected && isErrorOutput) || actual == expected) {
       println(s"PASS ${test.name} | Expr: ${test.code} | Expected: $expected | Got: $actual")
       results.passed += 1
     } else {

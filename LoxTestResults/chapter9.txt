@@ -1,0 +1,31 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter9.lox
+
+PASS if_true | Expr: if (true) print 1; | Expected: 1 | Got: 1
+PASS if_false | Expr: if (false) print 1; | Expected:  | Got:
+PASS if_else | Expr: if (false) print 1; else print 2; | Expected: 2 | Got: 2
+PASS nested_if | Expr: if (true) { if (false) print 1; else print 2; } | Expected: 2 | Got: 2
+PASS while_loop | Expr: var i = 0; while (i < 3) { print i; i = i + 1; } | Expected: 0\n1\n2 | Got: 0
+1
+2
+PASS while_false | Expr: while (false) print 1; | Expected:  | Got:
+Undefined variable 'i'.
+[line 1]
+PASS for_loop | Expr: for (var i = 0; i < 3; i = i + 1) print i; | Expected: 0\n1\n2 | Got: 0
+1
+2
+PASS break_sim | Expr: var i = 0; while (i < 3) { print i; i = i + 1; if (i == 2) i = 3; } | Expected: 0\n1 | Got: 0
+1
+PASS and_short | Expr: print false and (1/0); | Expected: false | Got: false
+PASS or_short | Expr: print true or (1/0); | Expected: true | Got: true
+
+==================================================
+SUMMARY
+==================================================
+Total:  10
+Passed: 10
+Failed: 0
+Rate:   100.0%
+==================================================

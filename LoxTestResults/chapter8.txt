@@ -1,0 +1,40 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter8.lox
+
+PASS var_basic | Expr: var a = 5; print a; | Expected: 5 | Got: 5
+PASS var_default_nil | Expr: var a; print a; | Expected: nil | Got: nil
+PASS var_reassign | Expr: var a = 1; a = 2; print a; | Expected: 2 | Got: 2
+PASS var_chain | Expr: var a = 1; var b = a + 2; print b; | Expected: 3 | Got: 3
+PASS var_expression | Expr: var a = 3; print a + 4; | Expected: 7 | Got: 7
+Undefined variable 'x'.
+[line 1]
+PASS block_scope | Expr: { var x = 10; print x; } print x; | Expected:  | Got:
+PASS assign_to_outer | Expr: var a = 1; { a = 2; } print a; | Expected: 2 | Got: 2
+Undefined variable 'a'.
+[line 1]
+PASS assign_to_undeclared | Expr: a = 3; | Expected:  | Got:
+Undefined variable 'a'.
+[line 1]
+PASS use_before_define | Expr: print a; var a = 1; | Expected:  | Got:
+PASS redeclare_same_scope | Expr: var a = 1; var a = 2; | Expected:  | Got:
+PASS expr_statement | Expr: var a = 1; a + 2; print a; | Expected: 1 | Got: 1
+PASS print_expr | Expr: var a = 3; print a + 2; | Expected: 5 | Got: 5
+PASS sequential_assign | Expr: var a = 1; a = a + 1; a = a * 3; print a; | Expected: 6 | Got: 6
+PASS nil_assignment | Expr: var a; a = 5; print a; | Expected: 5 | Got: 5
+PASS multiple_decl | Expr: var a = 1; var b = 2; var c = 3; print a + b + c; | Expected: 6 | Got: 6
+PASS nested_empty_blocks | Expr: {{{ print "ok"; }}} | Expected: ok | Got: ok
+PASS chained_eval | Expr: var x = 1; x = x + 1; x = x + 1; print x; | Expected: 3 | Got: 3
+PASS update_outer_from_inner | Expr: var a = 1; { a = 10; } print a; | Expected: 10 | Got: 10
+PASS assign_in_same_scope | Expr: var a = 5; a = a + 5; print a; | Expected: 10 | Got: 10
+PASS block_after_var | Expr: var a = 3; { print a; } | Expected: 3 | Got: 3
+
+==================================================
+SUMMARY
+==================================================
+Total:  20
+Passed: 20
+Failed: 0
+Rate:   100.0%
+==================================================

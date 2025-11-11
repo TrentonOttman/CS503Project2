@@ -1,0 +1,19 @@
+simple_expr | print 1 + 2; | 3
+nested_expr | print (1 + 2) * (3 + 4); | 21
+unary_expr | print -(-1); | 1
+double_negation | print !!true; | true
+precedence1 | print 1 + 2 * 3; | 7
+precedence2 | print (1 + 2) * 3; | 9
+grouped_logic | print (true and false) or true; | true
+complex_expr | print (1 + 2) * 3 == 9; | true
+nil_comparison | print nil == nil; | true
+invalid_syntax | print 1 + ; | ERROR
+extra_paren | print (1 + 2; | ERROR
+missing_paren | print 1 + (2; | ERROR
+string_concat | print "a" + "b"; | ab
+invalid_concat | print "a" - "b"; | 
+logic_not | print !false; | true
+truthy_num | print !!1; | true
+falsy_nil | print !nil; | true
+boolean_compare | print true == false; | false
+mix_compare | print 1 == "1"; | false

@@ -1,0 +1,20 @@
+var_basic | var a = 5; print a; | 5
+var_default_nil | var a; print a; | nil
+var_reassign | var a = 1; a = 2; print a; | 2
+var_chain | var a = 1; var b = a + 2; print b; | 3
+var_expression | var a = 3; print a + 4; | 7
+block_scope | { var x = 10; print x; } print x; | 
+assign_to_outer | var a = 1; { a = 2; } print a; | 2
+assign_to_undeclared | a = 3; | 
+use_before_define | print a; var a = 1; | 
+redeclare_same_scope | var a = 1; var a = 2; | 
+expr_statement | var a = 1; a + 2; print a; | 1
+print_expr | var a = 3; print a + 2; | 5
+sequential_assign | var a = 1; a = a + 1; a = a * 3; print a; | 6
+nil_assignment | var a; a = 5; print a; | 5
+multiple_decl | var a = 1; var b = 2; var c = 3; print a + b + c; | 6
+nested_empty_blocks | {{{ print "ok"; }}} | ok
+chained_eval | var x = 1; x = x + 1; x = x + 1; print x; | 3
+update_outer_from_inner | var a = 1; { a = 10; } print a; | 10
+assign_in_same_scope | var a = 5; a = a + 5; print a; | 10
+block_after_var | var a = 3; { print a; } | 3

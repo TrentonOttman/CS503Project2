@@ -1,0 +1,29 @@
+literal_number | print 1; | 1
+literal_string | print "hi"; | hi
+grouping_simple | print (1 + 2) * 3; | 9
+unary_negation | print -1; | -1
+unary_not | print !false; | true
+binary_add | print 2 + 3; | 5
+binary_sub | print 9 - 4; | 5
+binary_mul | print 3 * 3; | 9
+binary_div | print 8 / 4; | 2
+comparison_lt | print 1 < 2; | true
+comparison_le | print 2 <= 2; | true
+comparison_gt | print 3 > 1; | true
+comparison_ge | print 3 >= 3; | true
+equality_true | print 5 == 5; | true
+equality_false | print 5 == 4; | false
+inequality_true | print 5 != 4; | true
+inequality_false | print 5 != 5; | false
+string_concat | print "a" + "b"; | ab
+grouping_nested | print (1 + (2 * (3 + 4))); | 15
+expression_precedence | print 1 + 2 * 3; | 7
+left_associative | print 10 - 3 - 2; | 5
+division_prec | print 8 / 2 * 2; | 8
+compare_mix | print 3 + 4 > 6; | true
+boolean_and | print true and false; | false
+boolean_or | print true or false; | true
+boolean_mix | print (true or false) and true; | true
+negate_true | print !true; | false
+negate_false | print !false; | true
+nil_equality | print nil == nil; | true

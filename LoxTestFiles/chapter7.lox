@@ -1,0 +1,21 @@
+add_int | print 1 + 2; | 3
+add_float | print 1.5 + 2.5; | 4
+subtract | print 10 - 4; | 6
+multiply | print 2 * 3; | 6
+divide | print 8 / 2; | 4
+divide_float | print 7 / 2; | 3.5
+comparison | print 5 > 2; | true
+equal_str | print "hi" == "hi"; | true
+not_equal | print "hi" != "bye"; | true
+equal_num | print 2 == 2; | true
+equal_bool | print true == true; | true
+nil_check | print nil == nil; | true
+not_nil | print nil != nil; | false
+negate_num | print -3; | -3
+not_logic | print !false; | true
+truthy | print !!"hi"; | true
+falsy_nil | print !nil; | true
+error_div_zero | print 1 / 0; | Infinity
+error_type | print "a" - 1; | 
+combine_logic | print (true and false) or true; | true
+complex_math | print (2 + 3) * (4 - 1); | 15

@@ -1,0 +1,12 @@
+func_simple | fun f() { print 1; } f(); | 1
+func_return | fun f() { return 2; } print f(); | 2
+func_args | fun add(a, b) { return a + b; } print add(2, 3); | 5
+func_nested_call | fun a(){return 1;} fun b(){return a()+1;} print b(); | 2
+closure_basic | fun make(){ var x = 0; fun inc(){ x = x + 1; print x; } return inc; } var c = make(); c(); c(); | 1\n2
+recursion_simple | fun fact(n){ if (n<=1) return 1; return n*fact(n-1);} print fact(5); | 120
+early_return | fun test(){print 1; return 2; print 3;} print test(); | 1\n2
+no_return | fun f(){} print f(); | nil
+scope_inside_func | var a = "global"; fun show(){ print a; } show(); | global
+local_shadow | var a = "global"; fun test(){ var a = "local"; print a; } test(); | local
+param_shadow | fun f(a){ print a; } f("arg"); | arg
+return_nil | fun r(){return;} print r(); | nil

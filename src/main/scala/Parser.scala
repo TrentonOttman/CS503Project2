@@ -159,28 +159,30 @@ class Parser (private val tokens: List[Token]) {
     }
 
     private def function(kind: String): Stmt.Function = {
-        val name = consume(TokenType.IDENTIFIER, s"Expect $kind name.")
-        consume(TokenType.LEFT_PAREN, s"Expect '(' after $kind name.")
-        val parameters: List[Token] = new ArrayList[Token]
-        if (!check(TokenType.RIGHT_PAREN)) {
-            var first = true
-            var continue = true
-            while (continue) {
-                if (!first) advance()
-                first = false
-                if (parameters.size() >= 255) {
-                error(peek(), "Can't have more than 255 parameters.")
-                }
-                parameters.add(
-                consume(TokenType.IDENTIFIER, "Expect parameter name.")
-                )
-                continue = matchTypes(TokenType.COMMA)
-            }
+    val name = consume(TokenType.IDENTIFIER, s"Expect $kind name.")
+    consume(TokenType.LEFT_PAREN, s"Expect '(' after $kind name.")
+
+    val parameters = new java.util.ArrayList[Token]()
+    if (!check(TokenType.RIGHT_PAREN)) {
+        var more = true
+        while (more) {
+        if (parameters.size() >= 255)
+            error(peek(), "Can't have more than 255 parameters.")
+
+        parameters.add(
+            consume(TokenType.IDENTIFIER, "Expect parameter name.")
+        )
+
+        // matchTypes advances the token if it finds a comma
+        more = matchTypes(TokenType.COMMA)
         }
-        consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
-        consume(TokenType.LEFT_BRACE, s"Expect '{' before $kind body.")
-        val body = block()
-        new Stmt.Function(name, parameters.asScala.toList, body.asScala.toList)
+    }
+
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
+    consume(TokenType.LEFT_BRACE, s"Expect '{' before $kind body.")
+    val body = block()
+
+    new Stmt.Function(name, parameters.asScala.toList, body.asScala.toList)
     }
 
     private def block(): List[Stmt] = {

@@ -1,0 +1,38 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter6.lox
+
+PASS simple_expr | Expr: print 1 + 2; | Expected: 3 | Got: 3
+PASS nested_expr | Expr: print (1 + 2) * (3 + 4); | Expected: 21 | Got: 21
+PASS unary_expr | Expr: print -(-1); | Expected: 1 | Got: 1
+PASS double_negation | Expr: print !!true; | Expected: true | Got: true
+PASS precedence1 | Expr: print 1 + 2 * 3; | Expected: 7 | Got: 7
+PASS precedence2 | Expr: print (1 + 2) * 3; | Expected: 9 | Got: 9
+PASS grouped_logic | Expr: print (true and false) or true; | Expected: true | Got: true
+PASS complex_expr | Expr: print (1 + 2) * 3 == 9; | Expected: true | Got: true
+PASS nil_comparison | Expr: print nil == nil; | Expected: true | Got: true
+PASS invalid_syntax | Expr: print 1 + ; | Expected: ERROR | Got: [line 1] Error at ';': Expect expression.
+ERROR: Cannot invoke "com.craftinginterpreters.lox.Stmt.accept(com.craftinginterpreters.lox.Stmt$Visitor)" because "stmt" is null
+PASS extra_paren | Expr: print (1 + 2; | Expected: ERROR | Got: [line 1] Error at ';': Expect ')' after expression.
+ERROR: Cannot invoke "com.craftinginterpreters.lox.Stmt.accept(com.craftinginterpreters.lox.Stmt$Visitor)" because "stmt" is null
+PASS missing_paren | Expr: print 1 + (2; | Expected: ERROR | Got: [line 1] Error at ';': Expect ')' after expression.
+ERROR: Cannot invoke "com.craftinginterpreters.lox.Stmt.accept(com.craftinginterpreters.lox.Stmt$Visitor)" because "stmt" is null
+PASS string_concat | Expr: print "a" + "b"; | Expected: ab | Got: ab
+Operands must be numbers.
+[line 1]
+PASS invalid_concat | Expr: print "a" - "b"; | Expected:  | Got:
+PASS logic_not | Expr: print !false; | Expected: true | Got: true
+PASS truthy_num | Expr: print !!1; | Expected: true | Got: true
+PASS falsy_nil | Expr: print !nil; | Expected: true | Got: true
+PASS boolean_compare | Expr: print true == false; | Expected: false | Got: false
+PASS mix_compare | Expr: print 1 == "1"; | Expected: false | Got: false
+
+==================================================
+SUMMARY
+==================================================
+Total:  19
+Passed: 19
+Failed: 0
+Rate:   100.0%
+==================================================
