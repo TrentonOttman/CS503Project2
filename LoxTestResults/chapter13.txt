@@ -1,0 +1,24 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter13.lox
+
+PASS inherit_basic | Expr: class A{hi(){print "A";}} class B < A {} B().hi(); | Expected: A | Got: A
+PASS override_method | Expr: class A{hi(){print "A";}} class B < A{hi(){print "B";}} B().hi(); | Expected: B | Got: B
+PASS call_super | Expr: class A{hi(){print "A";}} class B < A{hi(){super.hi(); print "B";}} B().hi(); | Expected: A\nB | Got: A
+B
+PASS field_inherited | Expr: class A{init(){this.x=1;}} class B<A{} var b=B(); print b.x; | Expected: 1 | Got: 1
+PASS super_chain | Expr: class A{hi(){print "A";}} class B<A{hi(){super.hi(); print "B";}} class C<B{hi(){super.hi(); print "C";}} C().hi(); | Expected: A\nB\nC | Got: A
+B
+C
+PASS super_invalid | Expr: class A{} var b = super; | Expected: ERROR | Got: ERROR
+PASS no_superclass | Expr: class B < A {} | Expected: ERROR | Got: ERROR
+
+==================================================
+SUMMARY
+==================================================
+Total:  9
+Passed: 9
+Failed: 0
+Rate:   100.0%
+==================================================

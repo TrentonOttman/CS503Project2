@@ -1,0 +1,23 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter12.lox
+
+PASS class_basic | Expr: class Foo {} print Foo; | Expected: Foo | Got: Foo
+PASS class_init | Expr: class Foo {} var f = Foo(); print f; | Expected: Foo instance | Got: Foo instance
+PASS field_assign | Expr: class Foo {} var f = Foo(); f.x = 10; print f.x; | Expected: 10 | Got: 10
+PASS method_define | Expr: class Foo { greet(){ print "hi"; } } Foo().greet(); | Expected: hi | Got: hi
+FAIL this_use | Expr: class Foo { init(x){ this.x = x; } show(){ print this.x; } } var f = Foo(5); f.show(); | Expected: 5 | Got: 5
+FAIL multiple_fields | Expr: class P{init(x,y){this.x=x;this.y=y;} sum(){print this.x+this.y;} } P(2,3).sum(); | Expected: 5 | Got: 5
+FAIL independent_instances | Expr: class C{init(v){this.v=v;}} var a=C(1); var b=C(2); print a.v; print b.v; | Expected: 1\n2 | Got: 1
+2
+FAIL method_chain | Expr: class C{init(x){this.x=x;} inc(){this.x=this.x+1;} show(){print this.x;} } var c=C(1); c.inc(); c.show(); | Expected: 2 | Got: 2
+
+==================================================
+SUMMARY
+==================================================
+Total:  8
+Passed: 8
+Failed: 0
+Rate:   100.0%
+==================================================

@@ -1,0 +1,23 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter11.lox
+
+PASS redeclare_local | Expr: fun f(){ var a = 1; var a = 2; } | Expected: ERROR | Got: ERROR
+PASS read_own_init | Expr: var a = a; | Expected: ERROR | Got: ERROR
+PASS shadow_outer | Expr: var a = "outer"; { var a = "inner"; print a; } | Expected: inner | Got: inner
+PASS resolve_upvalue | Expr: var a = "global"; fun outer(){ fun inner(){ print a; } inner(); } outer(); | Expected: global | Got: global
+PASS assign_upvalue | Expr: var a = 1; fun outer(){ fun inner(){ a = 2; } inner(); } outer(); print a; | Expected: 2 | Got: 2
+PASS self_reference_func | Expr: fun f(){ f(); } | Expected: ERROR | Got: ERROR
+PASS block_shadow | Expr: var a = 1; { var a = 2; print a; } print a; | Expected: 2\n1 | Got: 2
+1
+PASS undefined_var | Expr: print b; | Expected: ERROR | Got: ERROR
+PASS too_many_locals | Expr: { var a1=1; var a2=2; var a3=3; var a4=4; var a5=5; print a5; } | Expected: 5 | Got: 5
+
+==================================================
+SUMMARY
+==================================================
+Total:  9
+Passed: 9
+Failed: 0
+Rate:   100.0%

@@ -1,0 +1,25 @@
+class Animal {
+    speak() { print "Animal sound"; }
+}
+
+class Dog < Animal {
+    speak() {
+        super.speak();
+        print "Woof!";
+    }
+}
+
+class Cat < Animal {
+    speak() {
+        super.speak();
+        print "Meow!";
+    }
+}
+
+var a = Animal();
+var d = Dog();
+var c = Cat();
+
+a.speak(); // Expected: Animal sound
+d.speak(); // Expected: Animal sound Woof!
+c.speak(); // Expected: Animal sound Meow!

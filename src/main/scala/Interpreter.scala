@@ -174,6 +174,7 @@ class Interpreter extends Expr.Visitor[Any], Stmt.Visitor[Unit] {
         val obj = environment.getAt(distance - 1, "this").asInstanceOf[LoxInstance]
         val method = superclass.findMethod(expr.method.lexeme)
         if (method == null) throw new RuntimeError(expr.method, s"Undefined property '${expr.method.lexeme}'.")
+        method.bind(obj)
     }
 
     override def visitExpressionStmt(stmt: Stmt.Expression): Unit = {

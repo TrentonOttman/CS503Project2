@@ -1,0 +1,16 @@
+fun makeCounter() {
+    var count = 0;
+    fun counter() {
+        count = count + 1;
+        print count;
+    }
+    return counter;
+}
+
+var c1 = makeCounter();
+var c2 = makeCounter();
+
+c1(); // Expected: 1
+c1(); // Expected: 2
+c2(); // Expected: 1
+c1(); // Expected: 3

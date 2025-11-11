@@ -1,0 +1,22 @@
+==================================================
+LOX INTERPRETER TEST
+==================================================
+File: LoxTestFiles/chapter10.lox
+
+PASS func_simple | Expr: fun f() { print 1; } f(); | Expected: 1 | Got: 1
+PASS func_return | Expr: fun f() { return 2; } print f(); | Expected: 2 | Got: 2
+PASS func_nested_call | Expr: fun a(){return 1;} fun b(){return a()+1;} print b(); | Expected: 2 | Got: 2
+PASS early_return | Expr: fun test(){print 1; return 2; print 3;} print test(); | Expected: 1\n2 | Got: 1
+2
+PASS no_return | Expr: fun f(){} print f(); | Expected: nil | Got: nil
+PASS scope_inside_func | Expr: var a = "global"; fun show(){ print a; } show(); | Expected: global | Got: global
+PASS return_nil | Expr: fun r(){return;} print r(); | Expected: nil | Got: nil
+
+==================================================
+SUMMARY
+==================================================
+Total:  7
+Passed: 7
+Failed: 0
+Rate:   100.0%
+==================================================
