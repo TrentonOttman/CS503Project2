@@ -24,7 +24,7 @@ Lox is a programming languange created by Robert Nystrom that has basic function
 
 ### Compilation Instructions
 - To run the REPL interpreter, enter the command `sbt run` and when prompted press `1`
-- To run a prewritten Lox test file, enter the command `sbt "run LoxTestFiles/fileName.lox"` and when prompted press `2`
+- To run a prewritten Lox test file, enter the command `sbt "run LoxTestFiles/fileName.lox"` and when prompted press `2` to run it in the TestRunner or press `1` to run it in the REPL
 - Generated files were built with `sbt "runMain com.craftinginterpreters.tool.GenerateAst src/main/scala/com/craftinginterpreters/lox"`
 
 ## Test Plan
@@ -69,4 +69,4 @@ NOTE: Tests for Chapter 11, 12, and 13 did not work in the TestRunner.Lox file a
 - No results file, 3/3
 
 ## Scala Feedback
-
+Scala was an interesting language to learn for this project. Admittedly, the code could have been written in a much more 'Scala' way (using the language to all of its functional capabilities) but it allows for a pretty clean translation from Java. We found that the Scala does a very good job of pointing out bugs in your code and will not let you compile and tell you sort them out. It is a good mix of functional and object oriented, though I do not see many similarities to LISP. The syntax for variables and functions looks a little odd but we got used to it pretty quick. All in all, it was nice to use and would consider using it again in the future.
