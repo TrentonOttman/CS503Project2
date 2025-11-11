@@ -1,0 +1,4 @@
+addition | print 1 + 2; | 3
+string_concat | print "hi" + " there"; | hi there
+variable | var a = 10; print a; | 10
+conditionals | if (true) print "ok"; | ok
